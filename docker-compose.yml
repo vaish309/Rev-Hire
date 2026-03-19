@@ -1,0 +1,147 @@
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: revhire-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  eureka-server:
+    build:
+      context: ./eureka-server
+      dockerfile: Dockerfile
+    container_name: revhire-eureka
+    restart: always
+    ports:
+      - "8761:8761"
+    depends_on:
+      - mysql
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: revhire-gateway
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      EUREKA_URL: http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: revhire-auth
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/revhire_auth_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      DB_PASSWORD: root123
+      EUREKA_URL: http://eureka-server:8761/eureka/
+    depends_on:
+      - mysql
+      - eureka-server
+
+  job-service:
+    build:
+      context: ./job-service
+      dockerfile: Dockerfile
+    container_name: revhire-job
+    restart: always
+    ports:
+      - "8082:8082"
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/revhire_job_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      DB_PASSWORD: root123
+      EUREKA_URL: http://eureka-server:8761/eureka/
+    depends_on:
+      - mysql
+      - eureka-server
+
+  application-service:
+    build:
+      context: ./application-service
+      dockerfile: Dockerfile
+    container_name: revhire-application
+    restart: always
+    ports:
+      - "8083:8083"
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/revhire_application_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      DB_PASSWORD: root123
+      EUREKA_URL: http://eureka-server:8761/eureka/
+    depends_on:
+      - mysql
+      - eureka-server
+
+  profile-service:
+    build:
+      context: ./profile-service
+      dockerfile: Dockerfile
+    container_name: revhire-profile
+    restart: always
+    ports:
+      - "8084:8084"
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/revhire_profile_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      DB_PASSWORD: root123
+      EUREKA_URL: http://eureka-server:8761/eureka/
+    depends_on:
+      - mysql
+      - eureka-server
+
+  company-service:
+    build:
+      context: ./company-service
+      dockerfile: Dockerfile
+    container_name: revhire-company
+    restart: always
+    ports:
+      - "8085:8085"
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/revhire_company_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      DB_PASSWORD: root123
+      EUREKA_URL: http://eureka-server:8761/eureka/
+    depends_on:
+      - mysql
+      - eureka-server
+
+  notification-service:
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
+    container_name: revhire-notification
+    restart: always
+    ports:
+      - "8086:8086"
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/revhire_notification_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      DB_PASSWORD: root123
+      EUREKA_URL: http://eureka-server:8761/eureka/
+    depends_on:
+      - mysql
+      - eureka-server
+
+  frontend:
+    build:
+      context: ./frontend-updated
+      dockerfile: Dockerfile
+    container_name: revhire-frontend
+    restart: always
+    ports:
+      - "4200:80"
+    depends_on:
+      - api-gateway
+
+volumes:
+  mysql-data:
