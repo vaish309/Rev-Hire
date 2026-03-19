@@ -1,0 +1,16 @@
+com\revhire\profile\exception\AppException.class
+com\revhire\profile\feign\AuthServiceClient.class
+com\revhire\profile\entity\JobSeekerProfile.class
+com\revhire\profile\dto\ProfileDto$CreateProfileRequest.class
+com\revhire\profile\repository\ProfileRepository.class
+com\revhire\profile\config\AppConfig.class
+com\revhire\profile\dto\ProfileDto$UpdateProfileRequest.class
+com\revhire\profile\ProfileServiceApplication.class
+com\revhire\profile\exception\GlobalExceptionHandler.class
+com\revhire\profile\repository\SavedJobRepository.class
+com\revhire\profile\entity\SavedJob.class
+com\revhire\profile\feign\AuthServiceClient$AuthServiceFallback.class
+com\revhire\profile\dto\ProfileDto.class
+com\revhire\profile\service\ProfileService.class
+com\revhire\profile\controller\ProfileController.class
+com\revhire\profile\dto\ProfileDto$ProfileResponse.class
